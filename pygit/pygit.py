@@ -1,6 +1,9 @@
 import os
 import sys
 import shutil
+import time
+import hashlib
+
 
 def init():
     """
@@ -20,9 +23,10 @@ def init():
     print("Initialized empty pygit repository.")
 
 
-def add(file_path, repo_dir=".pygit"):
-    """Stage a file for commit by copying it to the staging area."""
 
+def add(file_path, repo_dir=".pygit"):
+    """Stage a file for commit by copying it to the staging area and adding it to the index."""
+    
     # Ensure the staging directory exists
     staging_dir = os.path.join(repo_dir, "staging")
     os.makedirs(staging_dir, exist_ok=True)
@@ -34,7 +38,26 @@ def add(file_path, repo_dir=".pygit"):
     # Copy the file to the staging area
     dest_path = os.path.join(staging_dir, os.path.basename(file_path))
     shutil.copy(file_path, dest_path)
+
+    # Calculate the file hash (could be a sha1 or sha256 hash)
+    file_hash = hash_file(file_path)
+
+    # Add the file and hash to the index
+    index_path = os.path.join(repo_dir, "index")
+    with open(index_path, "a") as index_file:
+        index_file.write(f"{os.path.basename(file_path)} {file_hash}\n")
+    
     print(f"File {file_path} staged for commit.")
+    
+def hash_file(file_path):
+    """Calculate the hash of the file contents."""
+    hash_object = hashlib.sha1()  # You can choose another hash method like sha256
+    with open(file_path, "rb") as f:
+        while chunk := f.read(4096):
+            hash_object.update(chunk)
+    return hash_object.hexdigest()
+
+
 
 
 if __name__ == "__main__":
@@ -52,5 +75,5 @@ if __name__ == "__main__":
                 add(file_path)
             except FileNotFoundError as e:
                 print(e)
-    
+
 

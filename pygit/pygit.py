@@ -48,6 +48,33 @@ def add(file_path, repo_dir=".pygit"):
         index_file.write(f"{os.path.basename(file_path)} {file_hash}\n")
     
     print(f"File {file_path} staged for commit.")
+
+def get_staged_files(repo_dir=".pygit"):
+    """Returns a list of files currently staged for commit."""
+    
+    staged_files = []
+    index_path = os.path.join(repo_dir, "index")
+    
+    if os.path.exists(index_path):
+        with open(index_path, "r") as index_file:
+            staged_files = [line.split()[0] for line in index_file.readlines()]
+    
+    return staged_files
+
+def clear_staging_area(repo_dir=".pygit"):
+    """Clear the staging area by removing staged files and clearing the index."""
+    
+    staging_dir = os.path.join(repo_dir, "staging")
+    index_path = os.path.join(repo_dir, "index")
+    
+    # Remove files from the staging area
+    for file in os.listdir(staging_dir):
+        file_path = os.path.join(staging_dir, file)
+        os.remove(file_path)
+    
+    # Clear the index (staged files list)
+    if os.path.exists(index_path):
+        os.remove(index_path)
     
 def hash_file(file_path):
     """Calculate the hash of the file contents."""

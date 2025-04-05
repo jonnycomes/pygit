@@ -1,7 +1,12 @@
 import os
 import shutil
 import pytest
-from pygit.pygit import add 
+
+from pygit.pygit import init, add, get_staged_files, clear_staging_area
+
+REPO_DIR = ".pygit"
+STAGING_DIR = os.path.join(REPO_DIR, "staging")
+INDEX_PATH = os.path.join(REPO_DIR, "index")
 
 
 def test_add(tmpdir):
@@ -36,3 +41,57 @@ def test_add_file_not_found(tmpdir):
     # Test that FileNotFoundError is raised
     with pytest.raises(FileNotFoundError):
         add(str(nonexistent_file), repo_dir=str(repo_dir))
+
+
+
+@pytest.fixture
+def setup_repo(tmp_path, monkeypatch):
+    # Change working directory to the temp path
+    monkeypatch.chdir(tmp_path)
+    init()
+
+    # Create a sample file
+    test_file = tmp_path / "example.txt"
+    test_file.write_text("Hello, pygit!")
+
+    yield test_file
+
+    # Clean up
+    shutil.rmtree(tmp_path)
+
+
+def test_add_creates_staged_file_and_index_entry(setup_repo):
+    test_file = setup_repo
+    add(str(test_file))
+
+    # Check that the file was copied to staging
+    staged_file_path = os.path.join(STAGING_DIR, "example.txt")
+    assert os.path.exists(staged_file_path)
+
+    # Check that the index file exists and contains correct entry
+    assert os.path.exists(INDEX_PATH)
+    with open(INDEX_PATH) as f:
+        index_contents = f.read()
+    assert "example.txt" in index_contents
+
+
+def test_get_staged_files_returns_correct_list(setup_repo):
+    test_file = setup_repo
+    add(str(test_file))
+
+    staged = get_staged_files()
+    assert staged == ["example.txt"]
+
+
+def test_clear_staging_area_removes_staging_and_index(setup_repo):
+    test_file = setup_repo
+    add(str(test_file))
+
+    clear_staging_area()
+
+    # Staging directory should still exist but be empty
+    assert os.path.isdir(STAGING_DIR)
+    assert len(os.listdir(STAGING_DIR)) == 0
+
+    # Index should be gone
+    assert not os.path.exists(INDEX_PATH)

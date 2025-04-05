@@ -39,7 +39,7 @@ def add(file_path, repo_dir=".pygit"):
     dest_path = os.path.join(staging_dir, os.path.basename(file_path))
     shutil.copy(file_path, dest_path)
 
-    # Calculate the file hash (could be a sha1 or sha256 hash)
+    # Calculate the file hash
     file_hash = hash_file(file_path)
 
     # Add the file and hash to the index
@@ -51,7 +51,7 @@ def add(file_path, repo_dir=".pygit"):
     
 def hash_file(file_path):
     """Calculate the hash of the file contents."""
-    hash_object = hashlib.sha1()  # You can choose another hash method like sha256
+    hash_object = hashlib.sha1()  
     with open(file_path, "rb") as f:
         while chunk := f.read(4096):
             hash_object.update(chunk)

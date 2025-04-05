@@ -1,6 +1,13 @@
+import sys
 import os
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 import shutil
-from pygit import init
+import pytest
+from pygit.pygit import init
+
+
 
 def test_init_creates_repository_structure(tmp_path):
     """

@@ -7,6 +7,7 @@ def test_init_creates_repository_structure(tmp_path):
     """
     Test that init() creates the correct pygit directory structure.
     """
+    
     # Change to a temporary directory for testing
     os.chdir(tmp_path)
 

@@ -95,3 +95,45 @@ def test_clear_staging_area_removes_staging_and_index(setup_repo):
 
     # Index should be gone
     assert not os.path.exists(INDEX_PATH)
+
+def test_adding_same_file_twice_only_once_in_index(setup_repo):
+    test_file = setup_repo
+    add(str(test_file))
+    add(str(test_file))  # Add same file again
+
+    # Check index has only one entry for the file
+    with open(INDEX_PATH) as f:
+        lines = f.read().splitlines()
+    filenames = [line.split()[0] for line in lines]
+    assert filenames.count("example.txt") == 1
+
+
+    # Only one staged file exists
+    staged_files = os.listdir(STAGING_DIR)
+    assert staged_files.count("example.txt") == 1
+
+
+def test_staging_multiple_files(tmp_path, monkeypatch):
+    # Setup repo
+    monkeypatch.chdir(tmp_path)
+    init()
+
+    # Create two files
+    file1 = tmp_path / "file1.txt"
+    file2 = tmp_path / "file2.txt"
+    file1.write_text("First file")
+    file2.write_text("Second file")
+
+    # Add both
+    add(str(file1))
+    add(str(file2))
+
+    # Verify both in staging
+    assert set(os.listdir(STAGING_DIR)) == {"file1.txt", "file2.txt"}
+
+    # Verify both in index
+    with open(INDEX_PATH) as f:
+        index_entries = f.read().splitlines()
+    filenames = {line.split()[0] for line in index_entries}
+    assert filenames == {"file1.txt", "file2.txt"}
+

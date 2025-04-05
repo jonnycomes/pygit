@@ -25,29 +25,43 @@ def init():
 
 
 def add(file_path, repo_dir=".pygit"):
-    """Stage a file for commit by copying it to the staging area and adding it to the index."""
-    
+    """Stage a file for commit by copying it to the staging area and updating the index."""
+
     # Ensure the staging directory exists
     staging_dir = os.path.join(repo_dir, "staging")
     os.makedirs(staging_dir, exist_ok=True)
-    
+
     # Check if the file exists
     if not os.path.exists(file_path):
         raise FileNotFoundError(f"The file {file_path} does not exist.")
-    
-    # Copy the file to the staging area
+
+    # Read file content and generate blob hash
+    with open(file_path, "rb") as f:
+        content = f.read()
+    blob_hash = hashlib.sha1(content).hexdigest()
+
+    # Copy file to staging area
     dest_path = os.path.join(staging_dir, os.path.basename(file_path))
     shutil.copy(file_path, dest_path)
 
-    # Calculate the file hash
-    file_hash = hash_file(file_path)
-
-    # Add the file and hash to the index
+    # Update the index (no duplicate entries)
     index_path = os.path.join(repo_dir, "index")
-    with open(index_path, "a") as index_file:
-        index_file.write(f"{os.path.basename(file_path)} {file_hash}\n")
-    
+    entries = {}
+    if os.path.exists(index_path):
+        with open(index_path, "r") as f:
+            for line in f:
+                name, hash_ = line.strip().split()
+                entries[name] = hash_
+
+    # Overwrite or add the entry
+    entries[os.path.basename(file_path)] = blob_hash
+
+    with open(index_path, "w") as f:
+        for name, hash_ in entries.items():
+            f.write(f"{name} {hash_}\n")
+
     print(f"File {file_path} staged for commit.")
+
 
 def get_staged_files(repo_dir=".pygit"):
     """Returns a list of files currently staged for commit."""

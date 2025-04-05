@@ -3,7 +3,6 @@ import pytest
 from pygit.pygit import init
 
 
-
 def test_init_creates_repository_structure(tmp_path):
     """
     Test that init() creates the correct pygit directory structure.

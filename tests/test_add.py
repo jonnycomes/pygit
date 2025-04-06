@@ -79,7 +79,8 @@ def test_get_staged_files_returns_correct_list(setup_repo):
     add(str(test_file))
 
     staged = get_staged_files()
-    assert staged == ["example.txt"]
+    filenames = [filename for filename, _ in staged]
+    assert filenames == ["example.txt"]
 
 
 def test_clear_staging_area_removes_staging_and_index(setup_repo):

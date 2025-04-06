@@ -65,16 +65,11 @@ def add(file_path, repo_dir=".pygit"):
 
 
 def get_staged_files(repo_dir=".pygit"):
-    """Returns a list of files currently staged for commit."""
-    
-    staged_files = []
+    """Returns a list of (filename, hash) tuples representing the files staged for commit."""
     index_path = os.path.join(repo_dir, "index")
-    
-    if os.path.exists(index_path):
-        with open(index_path, "r") as index_file:
-            staged_files = [line.split()[0] for line in index_file.readlines()]
-    
-    return staged_files
+    with open(index_path, "r") as index_file:
+        return [tuple(line.strip().split()) for line in index_file]
+
 
 def clear_staging_area(repo_dir=".pygit"):
     """Clear the staging area by removing staged files and clearing the index."""
@@ -129,6 +124,9 @@ def update_head(commit_hash, repo_dir=".pygit"):
     with open(head_path, "w") as f:
         f.write(commit_hash)
 
+def clear_index(repo_dir=".pygit"):
+    """Clears the index file, effectively unstaging all files."""
+    open(os.path.join(repo_dir, "index"), "w").close()
 
 
 if __name__ == "__main__":

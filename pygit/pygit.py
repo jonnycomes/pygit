@@ -90,6 +90,7 @@ def commit(message, repo_dir=".pygit"):
     save_commit(commit_hash, commit_data, repo_dir=repo_dir)
     update_head(commit_hash, repo_dir=repo_dir)
     clear_staging_area(repo_dir=repo_dir)
+    clear_index(repo_dir=repo_dir)
 
     print(f"Committed as {commit_hash}")
 
@@ -175,10 +176,14 @@ if __name__ == "__main__":
                 print(e)
     # Command: commit
     elif sys.argv[1] == "commit":
-        if len(sys.argv) < 3:
-            print("Error: You must provide a commit message.")
+        if "-m" in sys.argv:
+            message_index = sys.argv.index("-m") + 1
+            if message_index < len(sys.argv):
+                message = sys.argv[message_index]
+                commit(message)
+            else:
+                print("Error: Commit message must be provided after -m.")
         else:
-            message = " ".join(sys.argv[2:])
-            commit(message)
+            print("Error: -m flag is required to specify a commit message.")
 
 

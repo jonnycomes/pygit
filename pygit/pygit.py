@@ -24,7 +24,6 @@ def init():
     print("Initialized empty pygit repository.")
 
 
-
 def add(file_path, repo_dir=".pygit"):
     """Stage a file for commit by copying it to the staging area and updating the index."""
 
@@ -62,6 +61,37 @@ def add(file_path, repo_dir=".pygit"):
             f.write(f"{name} {hash_}\n")
 
     print(f"File {file_path} staged for commit.")
+
+
+def commit(message, repo_dir=".pygit"):
+    """
+    Create a new commit from the currently staged files.
+
+    This function packages the staged files, generates a commit hash,
+    saves the commit object to the repository, updates HEAD, and clears
+    the staging area and index.
+    """
+    staged_files = get_staged_files(repo_dir=repo_dir)
+    if not staged_files:
+        print("Nothing to commit.")
+        return
+
+    parent = get_parent_commit(repo_dir=repo_dir)
+    timestamp = time.time()
+
+    commit_data = {
+        "message": message,
+        "timestamp": timestamp,
+        "parent": parent,
+        "files": staged_files,
+    }
+
+    commit_hash = generate_commit_hash(commit_data)
+    save_commit(commit_hash, commit_data, repo_dir=repo_dir)
+    update_head(commit_hash, repo_dir=repo_dir)
+    clear_staging_area(repo_dir=repo_dir)
+
+    print(f"Committed as {commit_hash}")
 
 
 def get_staged_files(repo_dir=".pygit"):
@@ -133,7 +163,6 @@ if __name__ == "__main__":
     # Command: init
     if sys.argv[1] == "init":
         init()
-
     # Command: add
     elif sys.argv[1] == "add":
         if len(sys.argv) < 3:
@@ -144,5 +173,12 @@ if __name__ == "__main__":
                 add(file_path)
             except FileNotFoundError as e:
                 print(e)
+    # Command: commit
+    elif sys.argv[1] == "commit":
+        if len(sys.argv) < 3:
+            print("Error: You must provide a commit message.")
+        else:
+            message = " ".join(sys.argv[2:])
+            commit(message)
 
 

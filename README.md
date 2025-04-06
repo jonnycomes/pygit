@@ -13,4 +13,3 @@ Currently, **pygit** supports basic Git operations, including:
 - Initializing a new repository (`init`)
 - Staging files for commit (`add`)
 - Committing changes (`commit`)
-- 

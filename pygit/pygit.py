@@ -3,6 +3,7 @@ import sys
 import shutil
 import time
 import hashlib
+import json
 
 
 def init():
@@ -98,6 +99,35 @@ def hash_file(file_path):
             hash_object.update(chunk)
     return hash_object.hexdigest()
 
+def get_parent_commit(repo_dir=".pygit"):
+    """Returns the hash of the current HEAD commit, or None if no commits yet."""
+    head_path = os.path.join(repo_dir, "HEAD")
+    if not os.path.exists(head_path):
+        return None
+
+    with open(head_path, "r") as f:
+        return f.read().strip()
+
+
+def generate_commit_hash(commit_data):
+    """Generate a SHA-1 hash based on the commit metadata."""
+    commit_string = json.dumps(commit_data, sort_keys=True)
+    return hashlib.sha1(commit_string.encode()).hexdigest()
+
+def save_commit(commit_hash, commit_data, repo_dir=".pygit"):
+    """Save the commit object as a JSON file in the .pygit/commits directory."""
+    commit_dir = os.path.join(repo_dir, "commits")
+    os.makedirs(commit_dir, exist_ok=True)
+
+    commit_path = os.path.join(commit_dir, f"{commit_hash}.json")
+    with open(commit_path, "w") as f:
+        json.dump(commit_data, f, indent=2)
+
+def update_head(commit_hash, repo_dir=".pygit"):
+    """Updates the HEAD reference to point to the given commit hash."""
+    head_path = os.path.join(repo_dir, "HEAD")
+    with open(head_path, "w") as f:
+        f.write(commit_hash)
 
 
 

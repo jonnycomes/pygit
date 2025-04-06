@@ -9,6 +9,22 @@ STAGING_DIR = os.path.join(REPO_DIR, "staging")
 INDEX_PATH = os.path.join(REPO_DIR, "index")
 
 
+@pytest.fixture
+def setup_repo(tmp_path, monkeypatch):
+    # Change working directory to the temp path
+    monkeypatch.chdir(tmp_path)
+    init()
+
+    # Create a sample file
+    test_file = tmp_path / "example.txt"
+    test_file.write_text("Hello, pygit!")
+
+    yield test_file
+
+    # Clean up
+    shutil.rmtree(tmp_path)
+
+
 def test_add(tmpdir):
     # Create a temporary directory to simulate the repo
     repo_dir = tmpdir.mkdir(".pygit")
@@ -41,23 +57,6 @@ def test_add_file_not_found(tmpdir):
     # Test that FileNotFoundError is raised
     with pytest.raises(FileNotFoundError):
         add(str(nonexistent_file), repo_dir=str(repo_dir))
-
-
-
-@pytest.fixture
-def setup_repo(tmp_path, monkeypatch):
-    # Change working directory to the temp path
-    monkeypatch.chdir(tmp_path)
-    init()
-
-    # Create a sample file
-    test_file = tmp_path / "example.txt"
-    test_file.write_text("Hello, pygit!")
-
-    yield test_file
-
-    # Clean up
-    shutil.rmtree(tmp_path)
 
 
 def test_add_creates_staged_file_and_index_entry(setup_repo):
@@ -95,6 +94,7 @@ def test_clear_staging_area_removes_staging_and_index(setup_repo):
 
     # Index should be gone
     assert not os.path.exists(INDEX_PATH)
+
 
 def test_adding_same_file_twice_only_once_in_index(setup_repo):
     test_file = setup_repo

@@ -6,26 +6,44 @@ import hashlib
 import json
 
 
-def init():
+def init(repo_dir=".pygit"):
     """
     Initialize a new pygit repository.
 
     This function creates the necessary directory structure for a pygit
-    repository, including the `.pygit/objects` and `.pygit/refs/heads` 
-    directories. It also creates a `.pygit/HEAD` file that points to the 
+    repository, including the `repo_dir/objects` and `repo_dir/refs/heads` 
+    directories. It also creates a `repo_dir/HEAD` file that points to the 
     default branch (refs/heads/master).
 
     If the repository already exists, it does nothing (thanks to exist_ok=True).
     """
-    os.makedirs(".pygit/objects", exist_ok=True)
-    os.makedirs(".pygit/refs/heads", exist_ok=True)
-    with open(".pygit/HEAD", "w") as f:
+    # Create the necessary directories within the specified repo_dir
+    os.makedirs(os.path.join(repo_dir, "objects"), exist_ok=True)
+    os.makedirs(os.path.join(repo_dir, "refs", "heads"), exist_ok=True)
+    
+    # Write the HEAD file in the repo_dir
+    with open(os.path.join(repo_dir, "HEAD"), "w") as f:
         f.write("ref: refs/heads/master\n")
+
+    # Create an empty index file in the repo_dir if it doesn't exist
+    index_path = os.path.join(repo_dir, "index")
+    if not os.path.exists(index_path):
+        with open(index_path, "w") as index_file:
+            pass  # Create an empty index file
+            
     print("Initialized empty pygit repository.")
 
 
 def add(file_path, repo_dir=".pygit"):
-    """Stage a file for commit by copying it to the staging area and updating the index."""
+    """
+    Stage a file for commit by copying it to the staging area and updating the index.
+
+    This function reads the specified file, generates a SHA-1 hash of its contents, 
+    and copies the file to the staging area (`repo_dir/staging`). It also updates the 
+    index (`repo_dir/index`) to record the file’s name and its corresponding hash.
+
+    If the file is already staged, its entry in the index will be updated.
+    """
 
     # Ensure the staging directory exists
     staging_dir = os.path.join(repo_dir, "staging")
@@ -90,7 +108,6 @@ def commit(message, repo_dir=".pygit"):
     save_commit(commit_hash, commit_data, repo_dir=repo_dir)
     update_head(commit_hash, repo_dir=repo_dir)
     clear_staging_area(repo_dir=repo_dir)
-    clear_index(repo_dir=repo_dir)
 
     print(f"Committed as {commit_hash}")
 
@@ -98,25 +115,38 @@ def commit(message, repo_dir=".pygit"):
 def get_staged_files(repo_dir=".pygit"):
     """Returns a list of (filename, hash) tuples representing the files staged for commit."""
     index_path = os.path.join(repo_dir, "index")
+    if not os.path.exists(index_path):  # Ensure the index file exists
+        return []
     with open(index_path, "r") as index_file:
         return [tuple(line.strip().split()) for line in index_file]
 
 
 def clear_staging_area(repo_dir=".pygit"):
     """Clear the staging area by removing staged files and clearing the index."""
-    
+
     staging_dir = os.path.join(repo_dir, "staging")
     index_path = os.path.join(repo_dir, "index")
-    
+
+    # Ensure the staging directory exists before listing its files
+    if not os.path.isdir(staging_dir):
+        os.makedirs(staging_dir)
+
     # Remove files from the staging area
-    for file in os.listdir(staging_dir):
-        file_path = os.path.join(staging_dir, file)
-        os.remove(file_path)
-    
+    if os.path.isdir(staging_dir):
+        for file in os.listdir(staging_dir):
+            file_path = os.path.join(staging_dir, file)
+            os.remove(file_path)
+
     # Clear the index (staged files list)
     if os.path.exists(index_path):
         os.remove(index_path)
-    
+
+    # Remove the staging directory if it is empty
+    if not os.listdir(staging_dir):
+        os.rmdir(staging_dir)
+
+
+
 def hash_file(file_path):
     """Calculate the hash of the file contents."""
     hash_object = hashlib.sha1()  
@@ -124,6 +154,7 @@ def hash_file(file_path):
         while chunk := f.read(4096):
             hash_object.update(chunk)
     return hash_object.hexdigest()
+
 
 def get_parent_commit(repo_dir=".pygit"):
     """Returns the hash of the current HEAD commit, or None if no commits yet."""
@@ -155,10 +186,6 @@ def update_head(commit_hash, repo_dir=".pygit"):
     with open(head_path, "w") as f:
         f.write(commit_hash)
 
-def clear_index(repo_dir=".pygit"):
-    """Clears the index file, effectively unstaging all files."""
-    open(os.path.join(repo_dir, "index"), "w").close()
-
 
 if __name__ == "__main__":
     # Command: init
@@ -185,5 +212,3 @@ if __name__ == "__main__":
                 print("Error: Commit message must be provided after -m.")
         else:
             print("Error: -m flag is required to specify a commit message.")
-
-

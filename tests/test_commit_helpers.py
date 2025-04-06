@@ -13,14 +13,18 @@ from pygit.pygit import (
     generate_commit_hash,
     save_commit,
     update_head,
-    clear_index,
 )
 
 @pytest.fixture
 def repo_dir(tmp_path):
     pygit = tmp_path / ".pygit"
     pygit.mkdir()
+    
+    # Ensure essential directories exist
+    (pygit / "index").parent.mkdir(parents=True, exist_ok=True)
+    (pygit / "commits").mkdir(parents=True, exist_ok=True)
     return pygit
+
 
 def test_get_staged_files(repo_dir):
     index = repo_dir / "index"
@@ -86,15 +90,4 @@ def test_update_head(repo_dir):
     assert head_path.exists()
     assert head_path.read_text() == commit_hash
 
-def test_clear_index(repo_dir):
-    index = repo_dir / "index"
-    index.write_text("file1.txt abc123\nfile2.txt def456\n")
-
-    # Ensure the index has content before clearing
-    assert index.read_text().strip() != ""
-
-    clear_index(repo_dir=repo_dir)
-
-    # Ensure the index is now empty
-    assert index.read_text() == ""
 

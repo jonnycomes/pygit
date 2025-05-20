@@ -1,7 +1,7 @@
 import tempfile
 from pathlib import Path
 import json
-from pygit.core.object import generate_commit_hash, save_commit
+from pygit.core.objects import generate_commit_hash, save_commit
 
 def test_generate_commit_hash_deterministic_and_differs_with_data():
     commit1 = {"message": "first", "timestamp": 12345, "parent": None, "files": {"file.txt": "abc123"}}

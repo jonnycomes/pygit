@@ -25,4 +25,10 @@ def get_head_commit_hash(repo_path: Path):
             return ref_path.read_text().strip()
     return None
 
+def is_ignored(path: Path, repo_path: Path) -> bool:
+    try:
+        return path.resolve().is_relative_to(repo_path.resolve())
+    except AttributeError:
+        # Python < 3.9 fallback
+        return repo_path.resolve() in path.resolve().parents
 

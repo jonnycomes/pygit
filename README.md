@@ -26,7 +26,7 @@ To get started with **pygit**, follow these steps:
    pip install --editable .
    ```
 
-## Features
+## Features (so far)
 
 ### `init`
 

@@ -52,10 +52,9 @@ When you run `pygit add <filename>`, the following steps are performed:
 ### 6. Print confirmation message
 
 - After successfully staging the file, the command prints:
-
-``` bash  
-Staged <filename>  
-```
+	``` bash  
+	Staged <filename>  
+	```
 
 ## Summary of files and changes
 

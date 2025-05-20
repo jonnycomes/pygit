@@ -27,26 +27,32 @@ def get_head_commit_hash(repo_path: Path):
     return None
 
 def is_ignored(path: Path, repo_path: Path) -> bool:
-    # Always ignore anything inside .pygit
-    try:
-        if path.resolve().is_relative_to(repo_path.resolve()):
-            return True
-    except AttributeError:
-        if repo_path.resolve() in path.resolve().parents:
-            return True
-
-    # Ignore .pygitignore and anything listed in it
-    repo_root = repo_path.parent.resolve()
+    # Normalize and resolve paths
+    path = path.resolve()
+    repo_path = repo_path.resolve()
+    repo_root = repo_path.parent
     pygitignore_path = repo_root / ".pygitignore"
 
-    if path.resolve() == pygitignore_path:
+    # Always ignore anything inside .pygit (the repo path)
+    if repo_path in path.parents or path == repo_path:
         return True
 
+    # Ignore the .pygitignore file itself
+    if path == pygitignore_path.resolve():
+        return True
+
+    # If there's no .pygitignore, nothing else to ignore
     if not pygitignore_path.exists():
         return False
 
     patterns = load_ignore_patterns(pygitignore_path)
-    rel_path = path.relative_to(Path("."))
+
+    try:
+        rel_path = path.relative_to(repo_root)
+    except ValueError:
+        return False  # If path is outside the repo, don't ignore it
+
+    # Match against each pattern using fnmatch
     return any(fnmatch.fnmatch(str(rel_path), pat) for pat in patterns)
     
 def load_ignore_patterns(ignore_file: Path) -> list[str]:

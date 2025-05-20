@@ -8,4 +8,21 @@ def get_parent_commit(repo_path: Path):
     return head_file.read_text().strip() if head_file.exists() else None
 
 def update_head(repo_path: Path, commit_hash: str):
-    (repo_path / "HEAD").write_text(commit_hash)
+    head_content = (repo_path / "HEAD").read_text().strip()
+    if head_content.startswith("ref: "):
+        ref_path = repo_path / head_content[5:]
+        ref_path.parent.mkdir(parents=True, exist_ok=True)
+        ref_path.write_text(commit_hash)
+    else:
+        # Detached HEAD
+        (repo_path / "HEAD").write_text(commit_hash)
+
+def get_head_commit_hash(repo_path: Path):
+    head_ref = (repo_path / "HEAD").read_text().strip()
+    if head_ref.startswith("ref: "):
+        ref_path = repo_path / head_ref[5:]
+        if ref_path.exists():
+            return ref_path.read_text().strip()
+    return None
+
+

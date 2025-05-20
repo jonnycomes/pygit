@@ -1,26 +1,23 @@
-import os
-import pytest
-from pygit.pygit import init
+from pathlib import Path
+from pygit.commands import init
 
+def test_init_creates_repo_structure(tmp_path):
+    repo_dir = tmp_path / ".pygit"
 
-def test_init_creates_repository_structure(tmp_path):
-    """
-    Test that init() creates the correct pygit directory structure.
-    """
-    
-    # Change to a temporary directory for testing
-    os.chdir(tmp_path)
+    # Run the init command
+    init.run(repo_dir)
 
-    # Run the init function
-    init()
+    # Check that .pygit directory was created
+    assert repo_dir.exists()
+    assert (repo_dir / "objects").is_dir()
+    assert (repo_dir / "refs" / "heads").is_dir()
 
-    # Define expected structure
-    assert (tmp_path / ".pygit").is_dir()
-    assert (tmp_path / ".pygit" / "objects").is_dir()
-    assert (tmp_path / ".pygit" / "refs" / "heads").is_dir()
+    # Check that HEAD and index files were created
+    head_file = repo_dir / "HEAD"
+    index_file = repo_dir / "index"
 
-    head_file = tmp_path / ".pygit" / "HEAD"
-    assert head_file.is_file()
+    assert head_file.exists()
+    assert index_file.exists()
 
-    with open(head_file, "r") as f:
-        assert f.read().strip() == "ref: refs/heads/master"
+    # Check HEAD contents
+    assert head_file.read_text() == "ref: refs/heads/master\n"

@@ -6,6 +6,8 @@
 
 The main goal of **pygit** is to provide hands-on experience with how Git works under the hood. By building it from scratch, I aim to better understand Git's data structures, workflows, and underlying mechanics.
 
+For a high-level overview of how Git (and pygit) work under the hood, see [Foundations of Version Control](docs/foundations.md).
+
 
 ## Installation
 

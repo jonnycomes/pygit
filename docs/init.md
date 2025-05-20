@@ -58,12 +58,12 @@ Initialized empty pygit repository.
 ## Summary of directory structure after `init`
 
 ```
+.pygitignore             # File listing ignored files/directories
 .pygit/
 ├── HEAD                 # File containing "ref: refs/heads/master\n"
 ├── index                # File containing "{}" (empty JSON object)
 ├── objects/             # Empty directory for storing Git objects (blobs, commits, trees)
 └── refs/
     └── heads/           # Empty directory to store branch references (e.g., master)
-.pygitignore             # File listing ignored files/directories
 ```
 

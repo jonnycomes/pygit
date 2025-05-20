@@ -62,3 +62,15 @@ pygit commit -m "Your commit message"
 
 [Read about `commit`](docs/commit.md)
 
+---
+
+### `status`
+
+Display the current state of the working directory and staging area—show which files are staged, modified, or untracked.
+
+```bash
+pygit status
+```
+
+[Read about `status`](docs/status.md)
+

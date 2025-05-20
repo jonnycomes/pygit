@@ -26,7 +26,7 @@ To get started with **pygit**, follow these steps:
 
 ## Features
 
-### Initialize a repo -- `init`
+### `init`
 
 Create a new `.pygit` directory with the necessary structure for tracking commits.
 
@@ -38,7 +38,7 @@ Read more: [docs/init.md](docs/init.md)
 
 ---
 
-### Stage files for commit -- `add`
+### `add`
 
 Add one or more files to the staging area.
 
@@ -50,7 +50,7 @@ Read more: [docs/add.md](docs/add.md)
 
 ---
 
-### Commit staged changes -- `commit`
+### `commit`
 
 Save a snapshot of the current state of the staged files with a commit message.
 

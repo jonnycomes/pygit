@@ -50,14 +50,3 @@ Initialized empty pygit repository.
 
 ```
 
----
-
-## Why is `init` important?
-
-- It sets up the foundation for all future version control operations.
-- Without these directories and files, pygit cannot track commits, branches, or staged changes.
-- The structure mimics core Git concepts, enabling easier implementation of commands that rely on these components.
-
-
-
-

@@ -19,9 +19,18 @@ When you run `pygit add <filename>`, the following steps are performed:
 - A directory named `staging` inside the `.pygit` repository is created if it doesn't already exist.
 - This staging area will temporarily hold copies of the files to be committed.
 
-### 2. Check that the file exists
+### 2. Check that the file exists and is not ignored
 
-- If the specified file does not exist in the working directory, the command raises a `FileNotFoundError`.
+- If the specified file does not exist, the command prints a message:
+```
+<filename> does not exist. Nothing added.
+```
+
+- If the file matches any pattern in `.pygitignore` (or is inside `.pygit`), the command prints a message:
+```
+<filename> is ignored. Skipping.
+```
+and skips staging it.
 
 ### 3. Hash the file contents
 

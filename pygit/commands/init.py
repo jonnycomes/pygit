@@ -9,6 +9,6 @@ def run(repo_dir=".pygit"):
     (repo_path / "refs" / "heads").mkdir(parents=True, exist_ok=True)
 
     (repo_path / "HEAD").write_text("ref: refs/heads/master\n")
-    (repo_path / "index").touch(exist_ok=True)
-
+    (repo_path / "index").write_text("{}")
+    
     print("Initialized empty pygit repository.")

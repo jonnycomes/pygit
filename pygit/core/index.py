@@ -1,16 +1,22 @@
 import json
 from pathlib import Path
 
-def load_index(repo_path: Path):
+def load_index(repo_path: Path) -> dict:
+    """
+    Load the index file as a dictionary of filename to hash.
+    If the index file does not exist, return an empty dictionary.
+    """
     index_file = repo_path / "index"
     if not index_file.exists():
         return {}
-    return dict(line.strip().split() for line in index_file.read_text().splitlines())
+    return json.loads(index_file.read_text())
 
-def save_index(repo_path: Path, index: dict):
+def save_index(repo_path: Path, index: dict) -> None:
+    """
+    Save the index dictionary to the index file in JSON format.
+    """
     index_file = repo_path / "index"
-    lines = [f"{k} {v}" for k, v in index.items()]
-    index_file.write_text("\n".join(lines) + "\n")
+    index_file.write_text(json.dumps(index, indent=2))
 
 def clear_index(repo_path: Path):
     (repo_path / "index").unlink(missing_ok=True)

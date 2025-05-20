@@ -22,15 +22,15 @@ When you run `pygit add <filename>`, the following steps are performed:
 ### 2. Check that the file exists and is not ignored
 
 - If the specified file does not exist, the command prints a message:
-```
-<filename> does not exist. Nothing added.
-```
+	```
+	<filename> does not exist. Nothing added.
+	```
 
 - If the file matches any pattern in `.pygitignore` (or is inside `.pygit`), the command prints a message:
-```
-<filename> is ignored. Skipping.
-```
-and skips staging it.
+	```
+	<filename> is ignored. Skipping.
+	```
+	and skips staging it.
 
 ### 3. Hash the file contents
 

@@ -8,7 +8,7 @@ The main goal of **pygit** is to provide hands-on experience with how Git works 
 
 ## Features
 
-Currently, **pygit** supports basic Git operations, including:
+Currently, **pygit** supports the following basic Git operations:
 
 - Initializing a new repository (`init`)
 - Staging files for commit (`add`)

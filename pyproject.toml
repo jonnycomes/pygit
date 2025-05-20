@@ -1,0 +1,9 @@
+[project]
+name = "pygit"
+version = "0.1.0"
+description = "A minimal Git clone in Python"
+authors = [{name = "Jonny Comes", email = "jonnycomes@gmail.com"}]
+dependencies = []
+
+[project.scripts]
+pygit = "pygit.main:main"

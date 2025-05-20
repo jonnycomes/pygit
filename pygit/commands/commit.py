@@ -1,6 +1,6 @@
 import time
 from pygit.core.index import load_index, clear_index
-from pygit.core.object import generate_commit_hash, save_commit
+from pygit.core.objects import generate_commit_hash, save_commit
 from pygit.core.repo import get_repo_path, get_parent_commit, update_head
 
 def run(message, repo_dir=".pygit"):

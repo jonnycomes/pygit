@@ -34,7 +34,7 @@ Create a new `.pygit` directory with the necessary structure for tracking commit
 pygit init
 ```
 
-Read more: [docs/init.md](docs/init.md)
+[Read about `init`](docs/init.md)
 
 ---
 
@@ -46,7 +46,7 @@ Add one or more files to the staging area.
 pygit add path/to/your/file.txt
 ```
 
-Read more: [docs/add.md](docs/add.md)
+[Read about `add`](docs/add.md)
 
 ---
 
@@ -58,5 +58,5 @@ Save a snapshot of the current state of the staged files with a commit message.
 pygit commit -m "Your commit message"
 ```
 
-Read more: [docs/commit.md](docs/commit.md)
+[Read about `commit`](docs/commit.md)
 

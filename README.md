@@ -6,10 +6,57 @@
 
 The main goal of **pygit** is to provide hands-on experience with how Git works under the hood. By building it from scratch, I aim to better understand Git's data structures, workflows, and underlying mechanics.
 
+
+## Installation
+
+To get started with **pygit**, follow these steps:
+
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/yourusername/pygit.git
+   cd pygit
+   ```
+
+2. Install the package in editable mode:
+
+   ```bash
+   pip install --editable .
+   ```
+
 ## Features
 
-Currently, **pygit** supports the following basic Git operations:
+### Initialize a repo -- `init`
 
-- Initializing a new repository (`init`)
-- Staging files for commit (`add`)
-- Committing changes (`commit`)
+Create a new `.pygit` directory with the necessary structure for tracking commits.
+
+```bash
+pygit init
+```
+
+Read more: [docs/init.md](docs/init.md)
+
+---
+
+### Stage files for commit -- `add`
+
+Add one or more files to the staging area.
+
+```bash
+pygit add path/to/your/file.txt
+```
+
+Read more: [docs/add.md](docs/add.md)
+
+---
+
+### Commit staged changes -- `commit`
+
+Save a snapshot of the current state of the staged files with a commit message.
+
+```bash
+pygit commit -m "Your commit message"
+```
+
+Read more: [docs/commit.md](docs/commit.md)
+

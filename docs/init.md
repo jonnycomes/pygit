@@ -37,7 +37,18 @@ When you run the `init` command, it performs the following steps inside the spec
 - It will be used to keep track of staged files and their content hashes.
 - This index file allows commands like `add` and `commit` to know what changes are staged for the next commit.
 
-### 5. Print confirmation message
+### 5. Create a `.pygitignore` file (if it does not exist)
+
+- The `.pygitignore` file is created in the root directory of the repository (the parent of the `.pygit` directory).
+- This file allows you to list files and directories that pygit should ignore.
+- If the file already exists, it will not be overwritten.
+- The file is initialized with a helpful comment:
+  
+```
+# Add files or directories to ignore, one per line
+```
+
+### 6. Print confirmation message
 
 - After the setup completes, the command prints:
 ```
@@ -53,6 +64,6 @@ Initialized empty pygit repository.
 ├── objects/             # Empty directory for storing Git objects (blobs, commits, trees)
 └── refs/
     └── heads/           # Empty directory to store branch references (e.g., master)
-
+.pygitignore             # File listing ignored files/directories
 ```
 

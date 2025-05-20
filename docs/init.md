@@ -4,6 +4,12 @@
 
 The `init` command initializes a new pygit repository by creating the essential directory structure and files needed to track and manage version control data. This setup closely mirrors the structure of a Git repository but is simplified for pygit.
 
+## Usage
+
+```bash
+pygit init
+```
+
 ## What happens during `init`?
 
 When you run the `init` command, it performs the following steps inside the specified repository directory (default is `.pygit`):
